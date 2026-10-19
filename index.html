@@ -133,9 +133,10 @@ TH={}}
 let SPD=350,mute=false,AC;const KIOSK=/kiosk/.test(location.search);
 const beep=(f,t=.12)=>{if(mute)return;try{AC=AC||new AudioContext();const o=AC.createOscillator(),g=AC.createGain();o.frequency.value=f;g.gain.value=.05;o.connect(g);g.connect(AC.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,AC.currentTime+t);o.stop(AC.currentTime+t)}catch(e){}};
 let hbT=null,hbBpm=66;const hbBase=()=>Math.round(66+18*(typeof S!=="undefined"&&S&&N?S.d/N:0));
-function thump(f,t,v){if(mute)return;try{AC=AC||new AudioContext();if(AC.state=="suspended")AC.resume();const o=AC.createOscillator(),g=AC.createGain(),n=AC.currentTime+t;o.type="triangle";o.frequency.setValueAtTime(f,n);o.frequency.exponentialRampToValueAtTime(f*.6,n+.14);
-g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(v,n+.015);g.gain.exponentialRampToValueAtTime(.0001,n+.2);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+.25)}catch(e){}}
-function beat(){thump(105,0,.28);thump(82,.2,.2);hbT=setTimeout(beat,60000/hbBpm)}
+function thump(f,t,v){if(mute)return;try{AC=AC||new AudioContext();if(AC.state=="suspended")AC.resume();const n=AC.currentTime+t;
+[[f,v],[f*2,v*.4]].forEach(([fr,vv])=>{const o=AC.createOscillator(),g=AC.createGain();o.type="triangle";o.frequency.setValueAtTime(fr,n);o.frequency.exponentialRampToValueAtTime(fr*.6,n+.14);
+g.gain.setValueAtTime(.0001,n);g.gain.exponentialRampToValueAtTime(vv,n+.015);g.gain.exponentialRampToValueAtTime(.0001,n+.22);o.connect(g);g.connect(AC.destination);o.start(n);o.stop(n+.27)})}catch(e){}}
+function beat(){thump(105,0,.8);thump(82,.2,.58);hbT=setTimeout(beat,60000/hbBpm)}
 function hbStart(b){if(b)hbBpm=b;if(!hbT&&!mute)beat()}
 function hbStop(){clearTimeout(hbT);hbT=null}
 const esc=x=>String(x).replace(/[&<>"']/g,c=>"&#"+c.charCodeAt(0)+";");
@@ -178,7 +179,7 @@ $("dots").innerHTML=SC.map(e=>`<i class="${S.d>e.d?"on":""}" style="left:${e.d/N
 const d=$("dl");d.textContent=(m>=0?"+":"")+m.toFixed(CF.md)+CF.mu+" today";d.className=m>=0?"up":"dn";S.curve[S.d-1]=S.sqPL+t.pl;
 $("hl").textContent=CF.hl;$("sub").textContent=CF.sub+" \u00b7 Scenario "+(S.sc+1)+" of "+SCN.length;$("r0").textContent=fd(0,{month:"short",year:"numeric"});$("r1").textContent=fd(N-1,{month:"short",year:"numeric"});
 $("l1").textContent=bd?"Price":"Day open";$("l5").textContent=bd?"US CPI":"Change so far";$("note").textContent=CF.note;
-const r=$("rpl");const run=S.sqPL+t.pl;r.textContent=sg(run);r.className="ta "+(run>=0?"gain":"loss");$("ctb").innerHTML=tbl(t,"Open position P&amp;L");pbox(t);document.querySelector(".hero").style.display=bd?"none":"";$("cp").style.display="none"}
+const r=$("rpl");const run=S.sqPL+t.pl;r.textContent=sg(run);r.className="ta "+(run>=0?"gain":"loss");$("ctb").innerHTML=tbl(t,"Open position P&amp;L");pbox(t);$("l5").parentNode.style.display=bd?"none":"";$("cp").style.display="none"}
 function render(){extras();const k=K[S.d-1],bd=CF.id=="bond",cp=bd&&cpAt(S.d-1),ch=pct(K[0].o,k.c);
 $("day").textContent=fd(S.d-1);$("cpi").textContent=bd?cp[1].toFixed(1)+"% ("+cp[2]+")":(ch>=0?"+":"")+ch.toFixed(1)+"%";$("who").textContent=S.name+(S.dept?" \u00b7 "+S.dept:"");
 $("y").textContent=CF.f(k.c);$("p").textContent=bd?price(k.c).toFixed(3):CF.f2(k.o);
@@ -243,7 +244,7 @@ show(`<div class="tag">Trading Finished</div><h2>${esc(S.name)}'s investment res
 <h3>Transaction history</h3><div class="txh">${S.hist.slice().reverse().map(h=>`<div>${h}</div>`).join("")||"No trades made."}</div>
 <div class="row"><button class="pri" onclick="ranking()">View Ranking</button></div>`)}
 function start(){show(`<h2>Welcome!</h2><p>Test your market instincts across three asset classes - bond, equity and currency - and see how much profit you can generate.</p>
-<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario.</li></ol>
+<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario, at the price on 30 Sept 2026.</li></ol>
 <p style="margin:10px 0 0"><b>Good luck!</b> The player with the highest total profit and loss (P&amp;L) across all scenarios wins the prize. Markets are unpredictable - stay sharp and make every decision count.</p>
 <div class="req"><b>Full name and department are required to be eligible for the prize.</b><span>This is how we identify participants and contact winners. Only one entry is allowed - if two are submitted, only the first counts. Winners will be notified directly and may collect their prizes on the next working day.</span></div>
 <input id="nm" placeholder="Full name" style="width:100%" maxlength="40"><input id="dp" placeholder="Department" style="width:100%" maxlength="30"><div id="m"></div>
