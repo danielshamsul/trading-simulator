@@ -107,14 +107,14 @@ const fd=(i,o)=>new Date(Date.UTC(2025,0,1+OFF[i])).toLocaleDateString("en-GB",O
 const price=v=>CF.real?Math.round(v*100)/100:Math.round(CF.pr(v)*1000)/1000;
 const NOTE="Orange candle: the price rose. Blue candle: the price fell. Green means profit, red means loss. Gold circles mark news. Simplified: no fees, dividends or interest.";
 const SCN=[
-{id:"eq",real:1,short:"Equity",name:"Equity: Meta Platforms (META)",sub:"Meta Platforms (META)",hl:"Meta share price",unit:"Meta shares",buyUp:1,spd:230,K:mkK(EQ.K),OFF:EQ.O,SC:EQ.E,note:NOTE,
+{id:"eq",real:1,short:"Equity",name:"Equity: Meta Platforms (META)",sub:"Meta Platforms (META)",hl:"Meta share price",unit:"Meta shares",buyUp:1,spd:400,K:mkK(EQ.K),OFF:EQ.O,SC:EQ.E,note:NOTE,
  pr:v=>100*v/EQ.K[0][3],f:v=>"$"+v.toFixed(2),f2:v=>"$"+v.toFixed(2),ax:v=>"$"+Math.round(v),mag:pct,mu:"%",md:2,rd:1,
  th:(p,v)=>"$"+p.toFixed(2)+" per share",pvx:(f,p,v)=>"About "+Math.round(f/v).toLocaleString()+" shares",noun:"Meta's share price",tail:()=>"",
  l:{b:["Buy","Bet Meta rises"],s:["Sell","Bet Meta falls"]},
  ot:{Buy:"Bet Meta rises (buy shares)",Sell:"Bet Meta falls (sell shares)"},sn:"Selling more than you own opens a short position, which gains if Meta falls.",
  intro:"A share price rises when investors expect the company to earn more, and falls when they have doubts.</p><p>The scenario covers daily price movements over a period of nearly 2 years. Watch the chart. When major news breaks, the game pauses. At each event you can make one trade: choose an amount, then <b>Buy</b> if you think Meta will rise, <b>Sell</b> if you think it will fall, or hold. Between events you can close your position at any time, and any open position is squared at the end of the scenario.",
  why:["Revenue beat forecasts and AI-driven ads were the engine. Holding spending plans steady can reassure investors worried about costs.","A huge bond sale to fund AI data centres signals very large spending ahead. Investors weigh future growth against the cost and the debt.","Faster growth is good news, but a much bigger spending plan can make investors worry about future profits.","New products can excite investors if people really use them. Early download numbers are the first test."]},
-{id:"bond",short:"Bonds",name:"Bonds: US 10-year Treasury",sub:"US 10-year Treasury",hl:"US 10-year yield",unit:"bonds",spd:350,K:mkK(BD.K),OFF:BD.O,SC:BD.E,CP:BD.CP,
+{id:"bond",short:"Bonds",name:"Bonds: US 10-year Treasury",sub:"US 10-year Treasury",hl:"US 10-year yield",unit:"bonds",spd:600,K:mkK(BD.K),OFF:BD.O,SC:BD.E,CP:BD.CP,
  note:"Orange candle: yield rose, so bond prices fell. Blue candle: yield fell, so bond prices rose. Green means profit, red means loss. Gold circles mark news. Bond price is estimated from yield moves, with no coupons or fees.",
  pr:v=>{const dy=(v-BD.K[0][3])/100;return 100*(1-8*dy+.5*75*dy*dy)},f:v=>v.toFixed(3)+"%",f2:v=>v.toFixed(2)+"%",ax:v=>v.toFixed(1)+"%",mag:(a,b)=>(b-a)*100,mu:" bp",md:1,rd:0,
  th:(p,v)=>p.toFixed(3)+" (yield "+v.toFixed(2)+"%)",pvx:(f,p)=>"Face value about "+usd(f*100/p),noun:"the 10-year yield",tail:o=>o.up?", so bond prices fell.":", so bond prices rose.",
@@ -122,13 +122,13 @@ const SCN=[
  ot:{Buy:"Bet yields fall (buy bonds)",Sell:"Bet yields rise (sell bonds)"},sn:"Selling more than you own opens a short position, which gains if yields rise.",
  intro:"The idea in one line: when yields rise, bond prices fall, and the other way round.</p><p>The scenario covers daily price movements over a period of 1 year. Watch the chart. When major news breaks, the game pauses. At each event you can make one trade: choose an amount, then <b>Buy</b> if you think yields will fall, <b>Sell</b> if you think yields will rise, or hold. Between events you can close your position at any time, and any open position is squared at the end of the scenario.",
  why:["Shocks like this can send investors to safe assets such as Treasuries, but oil and inflation worries can push the other way.","Closing the oil route raises fears of higher oil prices and inflation, which usually pushes yields up.","Japan is the largest foreign holder of US Treasuries, so moves in the yen can change how much it buys or sells.","When data matches forecasts, markets rarely react much, but steady high inflation keeps rate cuts off the table.","Strong jobs data suggests the economy can handle higher rates, so yields tend to rise.","Inflation sitting at 3.4% keeps pressure on the Fed to stay tough.","A rate hike signals the Fed is serious about inflation, and longer-term yields often rise with it."]},
-{id:"fx",real:1,short:"Currency",name:"Currency: USDJPY",sub:"USDJPY (US dollar vs Japanese yen)",hl:"USDJPY exchange rate",unit:"USDJPY",buyUp:1,spd:220,K:mkK(FX.K),OFF:FX.O,SC:FX.E,note:NOTE+" Currency P&L is converted to USD at the exit rate.",
+{id:"fx",real:1,short:"Currency",name:"Currency: USDJPY",sub:"USDJPY (US dollar vs Japanese yen)",hl:"USDJPY exchange rate",unit:"USDJPY",buyUp:1,spd:400,K:mkK(FX.K),OFF:FX.O,SC:FX.E,note:NOTE+" Currency P&L is converted to USD at the exit rate.",
  pr:v=>100*v/FX.K[0][3],f:v=>v.toFixed(2),f2:v=>v.toFixed(2),ax:(v,st)=>v.toFixed(st<1?1:0),mag:pct,mu:"%",md:2,rd:1,
  th:(p,v)=>p.toFixed(2)+" yen per dollar",pvx:(f,p,v)=>"About \u00a5"+Math.round(f*v).toLocaleString(),noun:"USDJPY",tail:o=>o.up?", so the dollar strengthened against the yen.":", so the dollar weakened against the yen.",
  l:{b:["Buy","Bet the dollar rises"],s:["Sell","Bet the dollar falls"]},
  ot:{Buy:"Bet the dollar rises (buy USDJPY)",Sell:"Bet the dollar falls (sell USDJPY)"},sn:"Selling more than you hold opens a short position, which gains if USDJPY falls, meaning the yen gets stronger.",
  intro:"USDJPY is the price of one US dollar in Japanese yen. When the number rises, the dollar is getting stronger against the yen; when it falls, the yen is getting stronger.</p><p>The scenario covers daily price movements over a period of nearly 2 years. Watch the chart. When major news breaks, the game pauses. At each event you can make one trade: choose an amount, then <b>Buy</b> if you think the dollar will rise against the yen, <b>Sell</b> if you think it will fall, or hold. Between events you can close your position at any time, and any open position is squared at the end of the scenario.",
- why:["A rate hike usually supports the yen, but this one was widely expected, so the surprise was small.","Initial concerns that tariffs could hurt US growth and disrupt global trade boosted demand for safe-haven currencies such as the Japanese yen. However, the dollar later recovered as markets increasingly viewed the tariffs as inflationary, reinforcing expectations for higher-for-longer Fed interest rates. As fears of an immediate economic slowdown eased and US Treasury yields rebounded, interest rate differentials once again favoured the dollar, driving USD/JPY higher.","Normally, a central bank raising rates strengthens its own currency, which here would be the yen. The dollar strengthened this time as the rate increase was outweighed by dovish forward guidance. US interest rates are still more attractive than Japanese yen rates.","When a government buys its own currency to stop it falling, the currency can jump quickly.","Both central banks raised rates, so the gap between US and Japanese interest rates barely changed."]}];
+ why:["A rate hike usually supports the yen, but this one was widely expected, so the surprise was small.","Worries about tariffs hurt confidence in the dollar, and money moved toward other currencies such as the yen.","Normally, a central bank raising rates strengthens its own currency, which here would be the yen. The dollar strengthened this time as the rate increase was outweighed by dovish forward guidance. US interest rates are still more attractive than Japanese yen rates.","When a government buys its own currency to stop it falling, the currency can jump quickly.","Both central banks raised rates, so the gap between US and Japanese interest rates barely changed."]}];
 [SCN[0],SCN[1]]=[SCN[1],SCN[0]];
 function load(i){CF=SCN[i];K=CF.K;N=K.length;OFF=CF.OFF;SC=CF.SC;CP=CF.CP||[];SPD=CF.spd;document.body.classList.toggle("bu",!!CF.buyUp);
 TH={}}
@@ -148,40 +148,41 @@ let TH={};const V=n=>TH[n]??=getComputedStyle(document.documentElement).getPrope
 const $=i=>document.getElementById(i),usd=v=>(v<0?"-":"")+"$"+Math.abs(Math.round(v)).toLocaleString("en-US");
 const sg=v=>(v>0?"+":"")+usd(v);
 let S,tm=null,pend=null,seen={};
-function fresh(name,dept){dept=dept||"";S={name,dept,key:keyOf(name,dept),res:[],np:0,sc:0,prev:0,d:1,trades:[],hist:[],marks:[],pred:{},ok:0,snap:{},rc:{},curve:[],sqPL:0,sq:[],nt:0,lastSq:null};seen={}}
+function fresh(name,dept){dept=dept||"";S={name,dept,key:keyOf(name,dept),res:[],np:0,sc:0,prev:0,d:1,N:0,C:0,R:0,last:null,rlz:[],hist:[],marks:[],pred:{},ok:0,snap:{},rc:{},curve:[],nt:0};seen={}}
 const cy=()=>K[S.d-1].c;
-function pnl(cur){cur=cur==null?price(cy()):cur;const fx=CF.id=="fx",rl=!!CF.real;let Nb=0,Gb=0,Ns=0,Gs=0,Ub=0,Us=0;
-for(const t of S.trades){if(!rl){const g=t.nom*t.p/100;if(t.nom>0){Nb+=t.nom;Gb+=g}else{Ns+=t.nom;Gs+=g}}
-else{const c=fx?t.nom*t.p:t.nom,u=fx?t.nom:t.nom/t.p;if(t.nom>0){Nb+=t.nom;Gb+=c;Ub+=u}else{Ns+=t.nom;Gs+=c;Us+=u}}}
-const net=Nb+Ns,U=rl?Ub+Us:net,val=rl?U*cur:net*cur/100,raw=-Gb-Gs+val,pl=fx?raw/cur:raw;
-return{Nb,Gb,wb:rl?(Ub?Gb/Ub:0):(Nb?Gb/Nb*100:0),Ns,Gs,ws:rl?(Us?Gs/Us:0):(Ns?Gs/Ns*100:0),net,U,cur,val,raw,pl}}
-const yn=x=>(x<0?"-":"")+"\u00a5"+Math.abs(Math.round(x)).toLocaleString();
-function tbl(t,lb){const rl=!!CF.real,fx=CF.id=="fx",f=x=>x?usd(x):"-",m=x=>x?(fx?yn(x):usd(x)):"-",dg=rl?2:4,w=(n,x)=>n?x.toFixed(dg):"-";
-const netc=rl&&!fx?(t.net?Math.round(t.U).toLocaleString()+" shares":"0"):(t.net?usd(t.net):"0");
-return `<table class="ct"><tr><th></th><th>${rl?"Amount (USD)":"Nominal"}</th><th>Weighted price</th><th>Proceeds${fx?" (JPY)":""}</th></tr>
-<tr><td>BUY</td><td>${f(t.Nb)}</td><td>${w(t.Nb,t.wb)}</td><td>${m(-t.Gb)}</td></tr>
-<tr><td>SELL</td><td>${f(t.Ns)}</td><td>${w(t.Ns,t.ws)}</td><td>${m(-t.Gs)}</td></tr>
-<tr><td>NET*</td><td>${netc}</td><td>@ ${t.cur.toFixed(dg)}</td><td>${fx?yn(t.val):usd(t.val)}</td></tr>
-${fx?`<tr><td colspan="3">P&amp;L in yen</td><td>${yn(t.raw)}</td></tr>`:""}
-<tr class="tot"><td colspan="3">${lb||"Running P&amp;L"}${fx?" (USD at "+t.cur.toFixed(2)+")":""}</td><td class="${t.pl>=0?"gain":"loss"}">${sg(t.pl)}</td></tr></table>`}
-function trade(nom){const v=cy(),p=price(v);S.trades.push({nom,p,v});S.nt++;
-S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: ${nom>0?"BUY":"SELL"} ${usd(Math.abs(nom))} at ${CF.th(p,v)}`);S.marks.push({i:S.d-1,s:nom>0?"Buy":"Sell"});beep(nom>0?520:420,.1);if(isFlat(pnl()))closePos("Offset",true)}
-const isFlat=t=>CF.real&&CF.id!="fx"?Math.abs(t.U)<1e-6:Math.abs(t.net)<1;
-function closePos(at,quiet){if(!S.trades.length)return false;const t=pnl(),rl=CF.real&&CF.id!="fx",U=rl?t.U:t.net,fl=isFlat(t),dg=CF.real?2:3;
-const avg=fl?"-":(CF.real?(t.Gb+t.Gs)/U:(t.Gb+t.Gs)/t.net*100).toFixed(dg),size=fl?"":rl?Math.round(Math.abs(U)).toLocaleString()+" shares":usd(Math.abs(t.net));
-S.sqPL+=t.pl;S.sq.push({at:at+" \u00b7 "+fd(S.d-1),side:fl?"Offset":U>0?"Long":"Short",size,avg,exit:t.cur.toFixed(dg),pl:t.pl});
-S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: CLOSED ${fl?"(offsetting trades)":(U>0?"long ":"short ")+size} at ${CF.th(t.cur,cy())}, P&L ${sg(t.pl)}`);S.trades=[];if(!quiet)S.marks.push({i:S.d-1,s:"Close"});render();return true}
-function closeNow(){if(!S.trades.length)return;closePos("Manual");beep(440,.12)}
-const sqTable=a=>a.length?`<table class="ct"><tr><th>Closed</th><th>Position</th><th>Entry</th><th>Exit</th><th>P&amp;L</th></tr>${a.map(x=>`<tr><td>${x.at}</td><td>${x.side} ${x.size}</td><td>${x.avg}</td><td>${x.exit}</td><td class="${x.pl>=0?"gain":"loss"}">${sg(x.pl)}</td></tr>`).join("")}</table>`:"<p>No trades were made in this scenario.</p>";
-function pbox(t){const rl=CF.real&&CF.id!="fx",flat=!S.trades.length,U=rl?t.U:t.net,dg=CF.real?2:3;
-$("pbt").innerHTML=flat?"No open position":`<b>${U>0?"Long":"Short"} ${rl?Math.round(Math.abs(U)).toLocaleString()+" shares":usd(Math.abs(t.net))}</b><span> &middot; avg entry ${(CF.real?(t.Gb+t.Gs)/U:(t.Gb+t.Gs)/t.net*100).toFixed(dg)}</span>`;
-const p=$("pbp");p.textContent=flat?"$0":sg(t.pl);p.className="n "+(flat?"":t.pl>=0?"gain":"loss");$("pbc").disabled=flat}
+const mult=()=>CF.id=="bond"?.01:1,yn=x=>(x<0?"-":"")+"\u00a5"+Math.abs(Math.round(x)).toLocaleString(),szt=q=>CF.id=="eq"?Math.round(Math.abs(q)).toLocaleString()+" shares":usd(Math.abs(q)),pxd=()=>CF.id=="bond"?3:2;
+function apply(q,p,lab){const N=S.N,C=S.C;let rl=0,add;
+if(!N||Math.sign(q)==Math.sign(N)){S.C=(Math.abs(N)*C+Math.abs(q)*p)/(Math.abs(N)+Math.abs(q));S.N=N+q;add=true}
+else{const k=Math.min(Math.abs(q),Math.abs(N));rl=Math.sign(N)*(p-C)*k*mult();S.R+=rl;S.N=N+q;add=false;
+if(Math.abs(q)>Math.abs(N)+1e-9)S.C=p;else if(Math.abs(S.N)<(CF.id=="eq"?1e-6:1)){S.N=0;S.C=0}
+S.rlz.push({at:fd(S.d-1)+(lab=="Close"?" \u00b7 closed":lab=="End"?" \u00b7 end":""),q,k,cost:C,p,rl})}
+S.last={q,p,add};S.nt++;return rl}
+function pnl(cur){cur=cur==null?price(cy()):cur;const N=S.N,C=S.C,m=mult(),fx=CF.id=="fx",U=N?N*(cur-C)*m:0,R=S.R,L=S.last,b={n:0,w:0},s={n:0,w:0};
+if(L){const row=L.q>0?b:s;if(L.add){row.n=N;row.w=C}else{row.n=L.q;row.w=L.p}}
+const cv=x=>fx?x/cur:x;return{N,C,cur,R,U,b,s,bp:b.n*b.w*m,sp:s.n*s.w*m,np:N*C*m,rU:cv(R),uU:cv(U),pl:cv(R+U)}}
+function tbl(t){const fx=CF.id=="fx",eq=CF.id=="eq",dg=eq||fx?2:4,px=x=>x?x.toFixed(dg):"-",nm=x=>x?(eq?Math.round(x).toLocaleString():usd(x)):"-",mo=x=>x?(fx?yn(x):usd(x)):"-";
+return `<table class="ct"><tr><th></th><th>${eq?"Shares":"Nominal"}</th><th>Weighted price</th><th>Proceeds${fx?" (JPY)":""}</th></tr>
+<tr><td>BUY</td><td>${nm(t.b.n)}</td><td>${px(t.b.w)}</td><td>${mo(t.bp)}</td></tr>
+<tr><td>SELL</td><td>${nm(t.s.n)}</td><td>${px(t.s.w)}</td><td>${mo(t.sp)}</td></tr>
+<tr><td>NET*</td><td>${nm(t.N)}</td><td>${px(t.C)}</td><td>${mo(t.np)}</td></tr>
+${fx?`<tr><td colspan="3">Realised P&amp;L in yen</td><td>${yn(t.R)}</td></tr><tr><td colspan="3">Realised P&amp;L in USD (at ${t.cur.toFixed(2)})</td><td>${sg(t.rU)}</td></tr>`:`<tr><td colspan="3">Realised P&amp;L</td><td>${sg(t.rU)}</td></tr>`}
+<tr><td colspan="3">Unrealised P&amp;L (at current price)</td><td>${sg(t.uU)}</td></tr>
+<tr class="tot"><td colspan="3">Total P&amp;L</td><td class="${t.pl>=0?"gain":"loss"}">${sg(t.pl)}</td></tr></table>`}
+const rzs=(x)=>CF.id=="fx"?yn(x):sg(x);
+function trade(amt){const v=cy(),p=price(v),rl=apply(CF.id=="eq"?amt/p:amt,p,"Trade");
+S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: ${amt>0?"BUY":"SELL"} ${usd(Math.abs(amt))} at ${CF.th(p,v)}${rl?`, realised P&L ${rzs(rl)}`:""}`);S.marks.push({i:S.d-1,s:amt>0?"Buy":"Sell"});beep(amt>0?520:420,.1)}
+function closeNow(){if(!S.N)return;const v=cy(),p=price(v),n=S.N,rl=apply(-n,p,"Close");
+S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: CLOSED ${n>0?"long ":"short "}${szt(n)} at ${CF.th(p,v)}, realised P&L ${rzs(rl)}`);S.marks.push({i:S.d-1,s:"Close"});beep(440,.12);render()}
+const sqTable=r=>{if(!r.rlz.length)return"<p>No position was closed or squared in this scenario.</p>";const dg=r.id=="bond"?3:2,eq=r.id=="eq";
+return `<table class="ct"><tr><th>When</th><th>Closed</th><th>Cost px</th><th>Trade px</th><th>Realised${r.id=="fx"?" (JPY)":""}</th></tr>${r.rlz.map(x=>`<tr><td>${x.at}</td><td>${x.q<0?"Sell":"Buy"} ${eq?Math.round(x.k).toLocaleString()+" sh":usd(x.k)}</td><td>${x.cost.toFixed(dg)}</td><td>${x.p.toFixed(dg)}</td><td class="${x.rl>=0?"gain":"loss"}">${r.id=="fx"?yn(x.rl):sg(x.rl)}</td></tr>`).join("")}</table>${r.id=="fx"?`<p style="margin:8px 0 0;font-size:13px">Total ${yn(r.R)} = <b class="${r.pl>=0?"gain":"loss"}">${sg(r.pl)}</b> at the final rate of ${r.cur.toFixed(2)}.</p>`:""}`};
+function pbox(t){const flat=!t.N;$("pbt").innerHTML=flat?"No open position":`<b>${t.N>0?"Long":"Short"} ${szt(t.N)}</b><span> &middot; avg entry ${t.C.toFixed(pxd())}</span>`;
+const p=$("pbp");p.textContent=flat?"$0":sg(t.uU);p.className="n "+(flat?"":t.uU>=0?"gain":"loss");$("pbc").disabled=flat}
 function extras(){const k=K[S.d-1],t=pnl(),m=CF.mag(k.o,k.c),bd=CF.id=="bond";$("pg").style.width=S.d/N*100+"%";
 $("dots").innerHTML=SC.map(e=>`<i class="${S.d>e.d?"on":""}" style="left:${e.d/N*100}%"></i>`).join("");
-const d=$("dl");d.textContent=(m>=0?"+":"")+m.toFixed(CF.md)+CF.mu+" today";d.className=m>=0?"up":"dn";S.curve[S.d-1]=S.sqPL+t.pl;
+const d=$("dl");d.textContent=(m>=0?"+":"")+m.toFixed(CF.md)+CF.mu+" today";d.className=m>=0?"up":"dn";S.curve[S.d-1]=t.pl;
 $("hl").textContent=CF.hl;$("sub").textContent=CF.sub+" \u00b7 Scenario "+(S.sc+1)+" of "+SCN.length;$("r0").textContent=fd(0,{month:"short",year:"numeric"});$("r1").textContent=fd(N-1,{month:"short",year:"numeric"});
 $("l1").textContent=bd?"Price":"Day open";$("l5").textContent=bd?"US CPI":"Change so far";$("note").textContent=CF.note;
-const r=$("rpl");const run=S.sqPL+t.pl;r.textContent=sg(run);r.className="ta "+(run>=0?"gain":"loss");$("ctb").innerHTML=tbl(t,"Open position P&amp;L");pbox(t);$("l5").parentNode.style.display=bd?"none":"";$("cp").style.display="none"}
+const r=$("rpl");r.textContent=sg(t.pl);r.className="ta "+(t.pl>=0?"gain":"loss");$("ctb").innerHTML=tbl(t)+'<p class="note" style="margin:8px 0 0">* The net amount is squared at the end of the scenario.</p>';pbox(t);$("l5").parentNode.style.display=bd?"none":"";$("cp").style.display="none"}
 function render(){extras();const k=K[S.d-1],bd=CF.id=="bond",cp=bd&&cpAt(S.d-1),ch=pct(K[0].o,k.c);
 $("day").textContent=fd(S.d-1);$("cpi").textContent=bd?cp[1].toFixed(1)+"% ("+cp[2]+")":(ch>=0?"+":"")+ch.toFixed(1)+"%";$("who").textContent=S.name+(S.dept?" \u00b7 "+S.dept:"");
 $("y").textContent=CF.f(k.c);$("p").textContent=bd?price(k.c).toFixed(3):CF.f2(k.o);
@@ -211,7 +212,7 @@ function show(h){$("card").innerHTML=h;$("ov").classList.add("on")}function hide
 function panel(h){$("ev").innerHTML=h;$("ev").classList.add("on");setTimeout(()=>$("ev").scrollIntoView({block:"end",behavior:"smooth"}),50)}
 function settle(e,days){if(S.rc[e.n])return S.rc[e.n];const j=Math.min(e.d+days-1,N-1),a=K[e.d].o,b=K[j].c,up=b>a,p=S.pred[e.n],hit=!!p&&p==(up?"up":"dn");if(hit)S.ok++;return S.rc[e.n]={days:j-e.d+1,o:{a,b,m:CF.mag(a,b),up},hit}}
 function rtext(e,r){const o=r.o;return `<b>${e.t}</b>: in ${r.days} trading day${r.days>1?"s":""}${r.live?" so far":""}, ${CF.noun} ${o.up?"rose":"fell"} ${Math.abs(o.m).toFixed(CF.rd)}${CF.mu.trim()} (${CF.f2(o.a)} to ${CF.f2(o.b)})${CF.tail(o)||"."} ${CF.why[e.n-1]}${e.af&&!r.live?` <i>Update: ${e.af}</i>`:""}`}
-function reveal(e){const t=$("toast");t.innerHTML=`<b>What happened next</b><br>${rtext(e,settle(e,5))}<br><button class="ghost" onclick="this.parentNode.classList.remove('on')">Got it</button>`;t.classList.add("on");clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove("on"),25000)}
+function reveal(e){const t=$("toast");t.innerHTML=`<b>What happened next</b><br>${rtext(e,settle(e,5))}<br><button class="ghost" onclick="this.parentNode.classList.remove('on')">Got it</button>`;t.classList.add("on");clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove("on"),40000)}
 $("lg").onclick=()=>{const was=!!tm;pause();const L=SC.filter(e=>S.d>e.d).reverse().map(e=>{let r=S.rc[e.n];if(!r){const days=Math.min(5,S.d-e.d),a=K[e.d].o,b=K[e.d+days-1].c;r={days,live:1,o:{a,b,m:CF.mag(a,b),up:b>a}}}return `<p class="lgi">${rtext(e,r)}</p>`}).join("");
 show(`<div class="tag">News log</div><h2>What has happened so far</h2>${L||"<p>No news yet.</p>"}<div class="row"><button class="pri" onclick="hide();${was?"play()":""}">Close</button></div>`)};
 function scn(s){pend=s;amt=0;render();beep(660);setTimeout(()=>beep(880),130);hbStart(108);let since="";const pe=SC.find(z=>z.n==s.n-1);if(pe&&!S.rc[pe.n]&&S.d>pe.d){since=`<div class="since"><b>Since the last news</b><br>${rtext(pe,settle(pe,S.d-pe.d))}</div>`}$("toast").classList.remove("on");
@@ -229,14 +230,18 @@ return `<div class="tag">Leaderboard</div><h2>Top traders</h2><ol class="lb">${a
 <p class="note">Preview: scores are saved on this device only, and sample rows are placeholders.</p>${label?`<div class="row"><button class="pri" onclick="start()">${label}</button></div>`:""}`}
 const board=l=>show(boardHTML(l));
 function ranking(){board("Next player");if(KIOSK){clearTimeout(window.kt);window.kt=setTimeout(()=>{if(/Top traders/.test($("card").textContent))start()},45000)}}
-function resetScn(){load(S.sc);Object.assign(S,{d:1,trades:[],marks:[],pred:{},rc:{},snap:{},curve:[],sqPL:0,sq:[],nt:0,lastSq:null});seen={};render()}
+function resetScn(){load(S.sc);Object.assign(S,{d:1,N:0,C:0,R:0,last:null,rlz:[],marks:[],pred:{},rc:{},snap:{},curve:[],nt:0});seen={};render()}
 function intro(){resetScn();show(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length}</div><h2>${CF.name}</h2><p>${CF.intro}</p>${S.sc?`<p class="note" style="margin:0">Total P&amp;L so far: <b class="${S.prev>=0?"gain":"loss"}">${sg(S.prev)}</b></p>`:""}<div class="row"><button class="pri" onclick="hide();play()">Begin scenario</button></div>`)}
-function endScn(){pause();hide();$("toast").classList.remove("on");SC.forEach(e=>settle(e,5));closePos("End of scenario");S.res.push({name:CF.name,trades:S.nt,pl:S.sqPL,sq:S.sq});S.prev+=S.sqPL;scnDone()}
+function endScn(){pause();hide();$("toast").classList.remove("on");SC.forEach(e=>settle(e,5));
+if(S.N){const v=cy(),p=price(v),n=S.N,rl=apply(-n,p,"End");S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: SQUARED ${n>0?"long ":"short "}${szt(n)} at ${CF.th(p,v)}, realised P&L ${rzs(rl)}`)}
+const t=pnl();S.res.push({id:CF.id,name:CF.name,trades:S.nt,pl:t.pl,R:t.R,cur:t.cur,rlz:S.rlz.slice()});S.prev+=t.pl;render();
+const e=SC[SC.length-1];panel(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length} &middot; final news</div><h2>What happened next</h2><p>${rtext(e,settle(e,5))}</p><p class="note" style="margin:0">Any open position has been squared at the final price of this scenario. Take your time to read this, then continue.</p><div class="row"><button class="pri" onclick="finishScn()">See scenario result</button></div>`)}
+function finishScn(){hide();scnDone()}
 function nextScn(){S.sc++;S.sc<SCN.length?intro():results()}
 function scnDone(){[523,659,784].forEach((f,i)=>setTimeout(()=>beep(f,.18),i*140));const r=S.res[S.res.length-1],last=S.sc>=SCN.length-1,nx=SCN[S.sc+1];
 const L=SC.map(e=>{const x=settle(e,5),o=x.o;return `<li>${e.n}. ${e.t}: ${o.up?"+":""}${o.m.toFixed(CF.rd)}${CF.mu.trim()} in ${x.days} days</li>`}).join("");
-show(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length} complete</div><h2>${CF.name}</h2><p class="big ${r.pl>=0?"gain":"loss"}" style="margin-bottom:2px">${sg(r.pl)}</p><p style="margin:0;color:var(--mut)">P&amp;L for this scenario &middot; ${r.trades} trade${r.trades==1?"":"s"}</p>
-<div class="rbox" style="margin-bottom:6px">${sqTable(r.sq)}</div><div class="facts"><div><b class="${S.prev>=0?"gain":"loss"}">${sg(S.prev)}</b><span>Total P&amp;L so far</span></div></div>
+show(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length} complete</div><h2>${CF.name}</h2><p class="big ${r.pl>=0?"gain":"loss"}" style="margin-bottom:2px">${sg(r.pl)}</p><p style="margin:0;color:var(--mut)">P&amp;L for this scenario (realised) &middot; ${r.trades} trade${r.trades==1?"":"s"}</p>
+<div class="rbox" style="margin-bottom:6px">${sqTable(r)}</div><div class="facts"><div><b class="${S.prev>=0?"gain":"loss"}">${sg(S.prev)}</b><span>Total P&amp;L so far</span></div></div>
 <h3>What moved the market</h3><ul class="ev">${L}</ul><div class="row"><button class="pri" onclick="nextScn()">${last?"See my results":"Continue to Scenario "+(S.sc+2)+": "+nx.short}</button></div>`)}
 function results(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,.2),i*150));const tp=S.prev,cl=tp>=0?"gain":"loss";S.t=Date.now();
 if(!rows().some(r=>r.key==S.key))try{localStorage.setItem("ttd3",JSON.stringify(rows().concat({name:S.name,dept:S.dept,key:S.key,pl:tp,t:S.t}).slice(-300)))}catch(e){}
@@ -246,7 +251,7 @@ show(`<div class="tag">Trading Finished</div><h2>${esc(S.name)}'s investment res
 <h3>Transaction history</h3><div class="txh">${S.hist.slice().reverse().map(h=>`<div>${h}</div>`).join("")||"No trades made."}</div>
 <div class="row"><button class="pri" onclick="ranking()">View Ranking</button></div>`)}
 function start(){show(`<h2>Welcome!</h2><p>Test your market instincts across three asset classes - bond, equity and currency - and see how much profit you can generate.</p>
-<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario.</li></ol>
+<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario, at the price on 30 Sept 2026.</li></ol>
 <p style="margin:10px 0 0"><b>Good luck!</b> The player with the highest total profit and loss (P&amp;L) across all scenarios wins the prize. Markets are unpredictable - stay sharp and make every decision count.</p>
 <div class="req"><b>Full name and department are required to be eligible for the prize.</b><span>This is how we identify participants and contact winners. Only one entry is allowed - if two are submitted, only the first counts. Winners will be notified directly and may collect their prizes on the next working day.</span></div>
 <input id="nm" placeholder="Full name" style="width:100%" maxlength="40"><input id="dp" placeholder="Department" style="width:100%" maxlength="30"><div id="m"></div>
