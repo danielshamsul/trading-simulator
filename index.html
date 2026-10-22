@@ -148,24 +148,24 @@ let TH={};const V=n=>TH[n]??=getComputedStyle(document.documentElement).getPrope
 const $=i=>document.getElementById(i),usd=v=>(v<0?"-":"")+"$"+Math.abs(Math.round(v)).toLocaleString("en-US");
 const sg=v=>(v>0?"+":"")+usd(v);
 let S,tm=null,pend=null,seen={};
-function fresh(name,dept){dept=dept||"";S={name,dept,key:keyOf(name,dept),res:[],np:0,sc:0,prev:0,d:1,N:0,C:0,R:0,last:null,rlz:[],hist:[],marks:[],pred:{},ok:0,snap:{},rc:{},curve:[],nt:0};seen={}}
+function fresh(name,dept){dept=dept||"";S={name,dept,key:keyOf(name,dept),res:[],np:0,sc:0,prev:0,d:1,N:0,C:0,R:0,rate:0,last:null,rlz:[],hist:[],marks:[],pred:{},ok:0,snap:{},rc:{},curve:[],nt:0};seen={}}
 const cy=()=>K[S.d-1].c;
 const mult=()=>CF.id=="bond"?.01:1,yn=x=>(x<0?"-":"")+"\u00a5"+Math.abs(Math.round(x)).toLocaleString(),szt=q=>CF.id=="eq"?Math.round(Math.abs(q)).toLocaleString()+" shares":usd(Math.abs(q)),pxd=()=>CF.id=="bond"?3:2;
 function apply(q,p,lab){const N=S.N,C=S.C;let rl=0,add;
 if(!N||Math.sign(q)==Math.sign(N)){S.C=(Math.abs(N)*C+Math.abs(q)*p)/(Math.abs(N)+Math.abs(q));S.N=N+q;add=true}
-else{const k=Math.min(Math.abs(q),Math.abs(N));rl=Math.sign(N)*(p-C)*k*mult();S.R+=rl;S.N=N+q;add=false;
+else{const k=Math.min(Math.abs(q),Math.abs(N));rl=Math.sign(N)*(p-C)*k*mult();S.R+=rl;S.rate=p;S.N=N+q;add=false;
 if(Math.abs(q)>Math.abs(N)+1e-9)S.C=p;else if(Math.abs(S.N)<(CF.id=="eq"?1e-6:1)){S.N=0;S.C=0}
 S.rlz.push({at:fd(S.d-1)+(lab=="Close"?" \u00b7 closed":lab=="End"?" \u00b7 end":""),q,k,cost:C,p,rl})}
 S.last={q,p,add};S.nt++;return rl}
 function pnl(cur){cur=cur==null?price(cy()):cur;const N=S.N,C=S.C,m=mult(),fx=CF.id=="fx",U=N?N*(cur-C)*m:0,R=S.R,L=S.last,b={n:0,w:0},s={n:0,w:0};
 if(L){const row=L.q>0?b:s;if(L.add){row.n=N;row.w=C}else{row.n=L.q;row.w=L.p}}
-const cv=x=>fx?x/cur:x;return{N,C,cur,R,U,b,s,bp:b.n*b.w*m,sp:s.n*s.w*m,np:N*C*m,rU:cv(R),uU:cv(U),pl:cv(R+U)}}
+const rU=fx?(S.rate?R/S.rate:0):R,uU=fx?U/cur:U;return{N,C,cur,R,U,b,s,bp:b.n*b.w*m,sp:s.n*s.w*m,np:N*C*m,rU,uU,pl:rU+uU,rate:S.rate}}
 function tbl(t){const fx=CF.id=="fx",eq=CF.id=="eq",dg=eq||fx?2:4,px=x=>x?x.toFixed(dg):"-",nm=x=>x?(eq?Math.round(x).toLocaleString():usd(x)):"-",mo=x=>x?(fx?yn(x):usd(x)):"-";
 return `<table class="ct"><tr><th></th><th>${eq?"Shares":"Nominal"}</th><th>Weighted price</th><th>Proceeds${fx?" (JPY)":""}</th></tr>
 <tr><td>BUY</td><td>${nm(t.b.n)}</td><td>${px(t.b.w)}</td><td>${mo(t.bp)}</td></tr>
 <tr><td>SELL</td><td>${nm(t.s.n)}</td><td>${px(t.s.w)}</td><td>${mo(t.sp)}</td></tr>
 <tr><td>NET*</td><td>${nm(t.N)}</td><td>${px(t.C)}</td><td>${mo(t.np)}</td></tr>
-${fx?`<tr><td colspan="3">Realised P&amp;L in yen</td><td>${yn(t.R)}</td></tr><tr><td colspan="3">Realised P&amp;L in USD (at ${t.cur.toFixed(2)})</td><td>${sg(t.rU)}</td></tr>`:`<tr><td colspan="3">Realised P&amp;L</td><td>${sg(t.rU)}</td></tr>`}
+${fx?`<tr><td colspan="3">Realised P&amp;L in yen</td><td>${yn(t.R)}</td></tr><tr><td colspan="3">Realised P&amp;L in USD (at ${t.rate?t.rate.toFixed(2):"-"}, locked when closed)</td><td>${sg(t.rU)}</td></tr>`:`<tr><td colspan="3">Realised P&amp;L</td><td>${sg(t.rU)}</td></tr>`}
 <tr><td colspan="3">Unrealised P&amp;L (at current price)</td><td>${sg(t.uU)}</td></tr>
 <tr class="tot"><td colspan="3">Total P&amp;L</td><td class="${t.pl>=0?"gain":"loss"}">${sg(t.pl)}</td></tr></table>`}
 const rzs=(x)=>CF.id=="fx"?yn(x):sg(x);
@@ -221,8 +221,10 @@ panel(`${since}<div class="tag">News ${s.n} of ${SC.length} &middot; ${fd(S.d)}<
 <div class="row"><button class="buy" disabled onclick="exec(1)">${CF.l.b[0]}<small>${CF.l.b[1]}</small></button><button class="sell" disabled onclick="exec(-1)">${CF.l.s[0]}<small>${CF.l.s[1]}</small></button><button class="hold" onclick="exec(0)">Hold</button></div><p class="note" style="margin:10px 0 0">One trade per news event. You can close your position at any time with the Close position button; any open position is squared at the end of the scenario.</p>`)}
 let amt=0;
 function chkAmt(){const x=parseFloat($("amtv").value),ok=x>=1&&x<=10;amt=ok?Math.round(x*10)*1e5:0;$("amtp").textContent=ok?"Amount: "+usd(amt):($("amtv").value?"Enter a value between 1 and 10":"");document.querySelectorAll("#ev .row .buy,#ev .row .sell").forEach(b=>b.disabled=!ok)}
-function exec(sgn){if(sgn){if(!amt)return;const v=cy();trade(sgn*amt);render();const t=$("toast");
-t.innerHTML=`<b>${sgn>0?"Bought":"Sold"} ${usd(amt)} of ${CF.unit}</b> at ${CF.th(price(v),v)}. It stays open until you close it or the scenario ends.<br><button class="ghost" onclick="this.parentNode.classList.remove('on')">Got it</button>`;t.classList.add("on");clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove("on"),7000)}go()}
+function exec(sgn){if(sgn){if(!amt)return;const v=cy(),n0=S.N;trade(sgn*amt);render();const n1=S.N,L=n1>0?"long":"short",L0=n0>0?"long":"short";
+let msg=!n0?`You are now ${L} ${szt(n1)}.`:!n1?`Your ${L0} position of ${szt(n0)} is closed. You are flat.`:Math.sign(n0)!=Math.sign(n1)?`Your position flipped: you are now ${L} ${szt(n1)}.`:Math.abs(n1)>Math.abs(n0)?`Your ${L} position is now ${szt(n1)}.`:`Your ${L} position is reduced to ${szt(n1)}.`;
+if(n1)msg+=" Use Close position to exit early.";const t=$("toast");
+t.innerHTML=`<b>${sgn>0?"Bought":"Sold"} ${usd(amt)} of ${CF.unit}</b> at ${CF.th(price(v),v)}.<br>${msg}<br><button class="ghost" onclick="this.parentNode.classList.remove('on')">Got it</button>`;t.classList.add("on");clearTimeout(t.h);t.h=setTimeout(()=>t.classList.remove("on"),9000)}go()}
 function go(){pend=null;hide();play()}
 const rows=()=>{try{return JSON.parse(localStorage.getItem("ttd3")||"[]")}catch(e){return[]}};
 function boardHTML(label){const a=rows().concat(SAMPLE.map(x=>({name:x[0],dept:x[1],pl:x[2],demo:1}))).sort((x,y)=>y.pl-x.pl).slice(0,10);
@@ -230,11 +232,11 @@ return `<div class="tag">Leaderboard</div><h2>Top traders</h2><ol class="lb">${a
 <p class="note">Preview: scores are saved on this device only, and sample rows are placeholders.</p>${label?`<div class="row"><button class="pri" onclick="start()">${label}</button></div>`:""}`}
 const board=l=>show(boardHTML(l));
 function ranking(){board("Next player");if(KIOSK){clearTimeout(window.kt);window.kt=setTimeout(()=>{if(/Top traders/.test($("card").textContent))start()},45000)}}
-function resetScn(){load(S.sc);Object.assign(S,{d:1,N:0,C:0,R:0,last:null,rlz:[],marks:[],pred:{},rc:{},snap:{},curve:[],nt:0});seen={};render()}
+function resetScn(){load(S.sc);Object.assign(S,{d:1,N:0,C:0,R:0,rate:0,last:null,rlz:[],marks:[],pred:{},rc:{},snap:{},curve:[],nt:0});seen={};render()}
 function intro(){resetScn();show(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length}</div><h2>${CF.name}</h2><p>${CF.intro}</p>${S.sc?`<p class="note" style="margin:0">Total P&amp;L so far: <b class="${S.prev>=0?"gain":"loss"}">${sg(S.prev)}</b></p>`:""}<div class="row"><button class="pri" onclick="hide();play()">Begin scenario</button></div>`)}
 function endScn(){pause();hide();$("toast").classList.remove("on");SC.forEach(e=>settle(e,5));
 if(S.N){const v=cy(),p=price(v),n=S.N,rl=apply(-n,p,"End");S.hist.unshift(`[${CF.short}] ${fd(S.d-1)}: SQUARED ${n>0?"long ":"short "}${szt(n)} at ${CF.th(p,v)}, realised P&L ${rzs(rl)}`)}
-const t=pnl();S.res.push({id:CF.id,name:CF.name,trades:S.nt,pl:t.pl,R:t.R,cur:t.cur,rlz:S.rlz.slice()});S.prev+=t.pl;render();
+const t=pnl();S.res.push({id:CF.id,name:CF.name,trades:S.nt,pl:t.pl,R:t.R,cur:t.rate||t.cur,rlz:S.rlz.slice()});S.prev+=t.pl;render();
 const e=SC[SC.length-1];panel(`<div class="tag">Scenario ${S.sc+1} of ${SCN.length} &middot; final news</div><h2>What happened next</h2><p>${rtext(e,settle(e,5))}</p><p class="note" style="margin:0">Any open position has been squared at the final price of this scenario. Take your time to read this, then continue.</p><div class="row"><button class="pri" onclick="finishScn()">See scenario result</button></div>`)}
 function finishScn(){hide();scnDone()}
 function nextScn(){S.sc++;S.sc<SCN.length?intro():results()}
@@ -251,8 +253,8 @@ show(`<div class="tag">Trading Finished</div><h2>${esc(S.name)}'s investment res
 <h3>Transaction history</h3><div class="txh">${S.hist.slice().reverse().map(h=>`<div>${h}</div>`).join("")||"No trades made."}</div>
 <div class="row"><button class="pri" onclick="ranking()">View Ranking</button></div>`)}
 function start(){show(`<h2>Welcome!</h2><p>Test your market instincts across three asset classes - bond, equity and currency - and see how much profit you can generate.</p>
-<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario.</li></ol>
-<p style="margin:10px 0 0"><b>Good luck!</b> The top 5 players with the highest net profit and loss (P&amp;L) across all scenarios win the prize. Markets are unpredictable - stay sharp and make every decision count.</p>
+<h3>Rules</h3><ol class="rules"><li>The price movement stops at each market event.</li><li>You can choose to buy, sell or hold, with an amount you enter between USD 1 and 10 million. Short selling is permitted.</li><li>You can only make one trade at every event.</li><li>You can close your position at any time.</li><li>Any unclosed position is squared at the end of the scenario, at the price on 30 Sept 2026.</li></ol>
+<p style="margin:10px 0 0"><b>Good luck!</b> The player with the highest total profit and loss (P&amp;L) across all scenarios wins the prize. Markets are unpredictable - stay sharp and make every decision count.</p>
 <div class="req"><b>Full name and department are required to be eligible for the prize.</b><span>This is how we identify participants and contact winners. Only one entry is allowed - if two are submitted, only the first counts. Winners will be notified directly and may collect their prizes on the next working day.</span></div>
 <input id="nm" placeholder="Full name" style="width:100%" maxlength="40"><input id="dp" placeholder="Department" style="width:100%" maxlength="30"><div id="m"></div>
 <div class="row"><button class="ghost" onclick="board('Back')">Leaderboard</button><button class="pri" onclick="launch()">Start</button></div>`)}
